@@ -63,7 +63,6 @@ class SearchInput {
   }
 
   render() {
-    console.log(this.history);
     if (this.history && this.history.length !== 0) {
       this.$searchHistory.innerHTML = this.history
         .map(

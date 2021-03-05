@@ -13,8 +13,10 @@ class App {
       $target,
       onSearch: async (keyword) => {
         this.keyword = keyword;
-        this.setState(this.data, true);
+
         this.searchResult.setScrollPaging(false);
+        this.setState(this.data, true);
+
         const { data } = await api.fetchCats(keyword);
         this.setState(data, false);
       },
@@ -38,10 +40,9 @@ class App {
       },
       loadMore: async (page) => {
         this.searchResult.setScrollPaging(true);
-        // this.setState(this.data, true);
+        this.setState(this.data, true);
         const { data } = await api.fetchByPage(page, this.keyword);
         const nextData = [...this.data, ...data];
-        console.log(nextData, "nextdata");
         this.setState(nextData, false);
       },
     });
@@ -62,7 +63,6 @@ class App {
   }
 
   setState(nextData, loading) {
-    // console.log(this);
     this.data = nextData;
     this.loading = loading;
     this.searchResult.setState(nextData, loading);

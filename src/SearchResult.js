@@ -12,6 +12,10 @@ class SearchResult {
     this.$searchResult.className = "SearchResult";
     $target.appendChild(this.$searchResult);
 
+    this.loader = new Loader({
+      $target: this.$searchResult,
+    });
+
     // this.data = initialData;
     this.onClick = onClick;
     this.loadMore = loadMore;
@@ -37,7 +41,6 @@ class SearchResult {
 
     io = new IntersectionObserver(callback, options);
     const lastChild = this.$searchResult.lastElementChild;
-    console.log(lastChild);
     if (lastChild && lastChild.classList.contains("item")) {
       io.observe(lastChild);
     }
@@ -79,17 +82,19 @@ class SearchResult {
 
   render() {
     if (this.isScrollPaging) {
-      // 여기도 로딩 처리가 있어야함.
-
-      const lastChildId = Number(this.$searchResult.lastElementChild.id);
-      const nextData = this.data.slice(lastChildId + 1);
-      this.appendDOMString(this.$searchResult, this.makeDOMString(nextData));
-      setTimeout(this.createObserver, 1000);
+      if (this.loading === false) {
+        this.loader.setLoader(false);
+        const lastChildId = Number(this.$searchResult.lastElementChild.id);
+        const nextData = this.data.slice(lastChildId + 1);
+        this.appendDOMString(this.$searchResult, this.makeDOMString(nextData));
+        setTimeout(this.createObserver, 1000);
+      } else {
+        this.loader.setLoader(true);
+      }
     } else {
       if (this.loading === false) {
-        // this.$searchResult.classList.add('SearchResult');
         if (!this.data) return;
-
+        this.loader.setLoader(false);
         if (this.data.length > 0) {
           this.$searchResult.innerHTML = this.makeDOMString(this.data);
           this.$searchResult.addEventListener("click", ({ target }) => {
@@ -103,8 +108,7 @@ class SearchResult {
           this.$searchResult.innerHTML = `<div class="no-result">검색결과가 없어요 ㅠㅜ</div>`;
         }
       } else {
-        this.$searchResult.innerHTML = `<div class="loading-message">로딩중 ...</div>`;
-        // this.$searchResult.classList.remove('SearchResult');
+        this.loader.setLoader(true);
       }
     }
   }
