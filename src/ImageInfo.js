@@ -22,34 +22,44 @@ class ImageInfo {
   render() {
     if (this.data.visible) {
       const { name, url, temperament, origin } = this.data.image;
-
+      this.$imageInfo.style.display = "block";
+      this.$imageInfo.className = `${this.$imageInfo.className} fade-in`;
       this.$imageInfo.innerHTML = `
 		  <div class="content-wrapper">
-			<div class="title">
-			  <span>${name}</span>
-			  <div class="close">x</div>
-			</div>
-			<img src="${url}" alt="${name}"/>
-			<div class="description">
-			  <div>성격: ${temperament}</div>
-			  <div>태생: ${origin}</div>
-			</div>
+        <div class="title">
+          <span>${name}</span>
+          <div class="close">x</div>
+        </div>
+        <img src="${url}" alt="${name}"/>
+        <div class="description">
+          <div>성격: ${temperament}</div>
+          <div>태생: ${origin}</div>
+        </div>
 		  </div>`;
-      this.$imageInfo.style.display = "block";
 
-      this.$imageInfo.querySelector(".close").addEventListener("click", (e) => {
-        this.onClose(this.data);
+      this.$imageInfo.querySelector(".close").addEventListener("click", () => {
+        this.$imageInfo.classList.add("fade-out");
       });
       this.$imageInfo
         .querySelector(".content-wrapper")
         .addEventListener("click", (e) => {
           e.stopPropagation();
         });
-      this.$imageInfo.addEventListener("click", ({ target }) => {
-        this.onClose(this.data);
+      this.$imageInfo.addEventListener("click", function () {
+        this.classList.add("fade-out");
+      });
+      this.$imageInfo.addEventListener("animationend", () => {
+        if (this.$imageInfo.classList.contains("fade-out")) {
+          this.onClose(this.data);
+          this.$imageInfo.classList.remove("fade-out");
+        } else if (this.$imageInfo.classList.contains("fade-in")) {
+          this.$imageInfo.classList.remove("fade-in");
+        }
       });
       document.addEventListener("keyup", ({ key }) => {
-        if (key === "Escape") this.onClose(this.data);
+        if (key === "Escape") {
+          this.$imageInfo.classList.add("fade-out");
+        }
       });
     } else {
       this.$imageInfo.style.display = "none";

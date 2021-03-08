@@ -20,6 +20,7 @@ class SearchResult {
     this.onClick = onClick;
     this.loadMore = loadMore;
     this.createObserver = this.createObserver.bind(this);
+    this.openModal = this.openModal.bind(this);
     this.render();
   }
 
@@ -68,6 +69,13 @@ class SearchResult {
       .join("");
   }
 
+  openModal({ target }) {
+    if (target.classList.contains("cat-image")) {
+      const id = target.src.split("images/")[1].split(".")[0];
+      this.onClick(this.data.find((cat) => cat.id === id));
+    }
+  }
+
   parseDOMString(str) {
     const wrapper = document.createElement("div");
     wrapper.innerHTML = str;
@@ -97,12 +105,7 @@ class SearchResult {
         this.loader.setLoader(false);
         if (this.data.length > 0) {
           this.$searchResult.innerHTML = this.makeDOMString(this.data);
-          this.$searchResult.addEventListener("click", ({ target }) => {
-            if (target.classList.contains("cat-image")) {
-              const id = target.src.split("images/")[1].split(".")[0];
-              this.onClick(this.data.find((cat) => cat.id === id));
-            }
-          });
+          this.$searchResult.addEventListener("click", this.openModal);
           setTimeout(this.createObserver, 1000);
         } else {
           this.$searchResult.innerHTML = `<div class="no-result">검색결과가 없어요 ㅠㅜ</div>`;
