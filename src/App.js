@@ -9,6 +9,10 @@ class App {
   constructor($target) {
     this.$target = $target;
 
+    this.darkMode = new DarkMode({
+      $target,
+    });
+
     this.searchInput = new SearchInput({
       $target,
       onSearch: async (keyword) => {
