@@ -70,8 +70,10 @@ class SearchResult {
   }
 
   openModal({ target }) {
-    if (target.classList.contains("cat-image")) {
-      const id = target.src.split("images/")[1].split(".")[0];
+    if (target.classList.contains("overlay")) {
+      const id = target.previousElementSibling.src
+        .split("images/")[1]
+        .split(".")[0];
       this.onClick(this.data.find((cat) => cat.id === id));
     }
   }
@@ -109,10 +111,14 @@ class SearchResult {
           this.$searchResult.addEventListener("mouseover", ({ target }) => {
             if (!target.classList.contains("cat-image")) return;
             const overlay = document.createElement("div");
+            const item = target.closest(".item");
+            const catName = this.data[Number(item.id)].name;
+
             overlay.className = "overlay";
-            overlay.innerText = "hello cat";
-            target.closest(".item").appendChild(overlay);
+            overlay.innerText = catName;
+            item.appendChild(overlay);
           });
+
           this.$searchResult.addEventListener(
             "mouseout",
             function ({ target }) {
