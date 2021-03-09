@@ -41,6 +41,7 @@ body * {
 .SearchResult .item {
   background-color: #eee;
   display: inline-block;
+  position: relative;
   margin: 0 0 1em;
   width: 100%;
 }
@@ -141,6 +142,19 @@ body * {
 }
 .fade-out {
   animation: hide 0.8s;
+}
+.item .overlay {
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: #7979794d;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  font-size: 1.5rem;
 }
 @-webkit-keyframes load7 {
   0%,

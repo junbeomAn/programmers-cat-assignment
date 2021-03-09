@@ -95,7 +95,7 @@ class SearchResult {
         const lastChildId = Number(this.$searchResult.lastElementChild.id);
         const nextData = this.data.slice(lastChildId + 1);
         this.appendDOMString(this.$searchResult, this.makeDOMString(nextData));
-        setTimeout(this.createObserver, 1000);
+        setTimeout(this.createObserver, 3000);
       } else {
         this.loader.setLoader(true);
       }
@@ -106,7 +106,22 @@ class SearchResult {
         if (this.data.length > 0) {
           this.$searchResult.innerHTML = this.makeDOMString(this.data);
           this.$searchResult.addEventListener("click", this.openModal);
-          setTimeout(this.createObserver, 1000);
+          this.$searchResult.addEventListener("mouseover", ({ target }) => {
+            if (!target.classList.contains("cat-image")) return;
+            const overlay = document.createElement("div");
+            overlay.className = "overlay";
+            overlay.innerText = "hello cat";
+            target.closest(".item").appendChild(overlay);
+          });
+          this.$searchResult.addEventListener(
+            "mouseout",
+            function ({ target }) {
+              if (!target.classList.contains("overlay")) return;
+              const overlay = this.querySelector(".overlay");
+              target.closest(".item").removeChild(overlay);
+            }
+          );
+          setTimeout(this.createObserver, 3000);
         } else {
           this.$searchResult.innerHTML = `<div class="no-result">검색결과가 없어요 ㅠㅜ</div>`;
         }
