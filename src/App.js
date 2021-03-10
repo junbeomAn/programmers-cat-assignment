@@ -20,7 +20,6 @@ class App {
 
         this.searchResult.setScrollPaging(false);
         this.setState(this.data, true);
-
         const { data } = await api.fetchCats(keyword);
         this.setState(data, false);
       },

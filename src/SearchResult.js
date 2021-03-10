@@ -9,7 +9,10 @@ class SearchResult {
 
   constructor({ $target, initialData, onClick, loadMore }) {
     this.$searchResult = document.createElement("div");
+    this.$overlay = document.createElement("div");
+
     this.$searchResult.className = "SearchResult";
+    this.$overlay.className = "overlay";
     $target.appendChild(this.$searchResult);
 
     this.loader = new Loader({
@@ -27,7 +30,7 @@ class SearchResult {
     let io;
 
     const options = {
-      rootMargin: "0px 0px 30px 0px",
+      rootMargin: "0px 0px 200px 0px",
     };
 
     const callback = (entries, observer) => {
@@ -143,23 +146,19 @@ class SearchResult {
           this.$searchResult.addEventListener("click", this.openModal);
           this.$searchResult.addEventListener("mouseover", ({ target }) => {
             if (!target.classList.contains("cat-image")) return;
-            const overlay = document.createElement("div");
+
             const item = target.closest(".item");
             const catName = this.data[Number(item.id)].name;
 
-            overlay.className = "overlay";
-            overlay.innerText = catName;
-            item.appendChild(overlay);
+            this.$overlay.innerText = catName;
+            item.appendChild(this.$overlay);
           });
 
-          this.$searchResult.addEventListener(
-            "mouseout",
-            function ({ target }) {
-              if (!target.classList.contains("overlay")) return;
-              const overlay = this.querySelector(".overlay");
-              target.closest(".item").removeChild(overlay);
-            }
-          );
+          this.$searchResult.addEventListener("mouseout", ({ target }) => {
+            if (!target.classList.contains("overlay")) return;
+
+            target.closest(".item").removeChild(this.$overlay);
+          });
 
           this.createObserver();
         } else {

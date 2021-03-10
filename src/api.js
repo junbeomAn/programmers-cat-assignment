@@ -27,7 +27,11 @@ const api = {
 const request = async (url) => {
   try {
     const result = await fetch(url);
-    return result.json();
+    if (result.status === 200) {
+      return result.json();
+    } else if (result.status === 500) {
+      alert("검색 중 오류가 발생했습니다. 페이지 새로고침을 해주세요.");
+    }
   } catch (e) {
     console.warn(e);
   }
