@@ -16,12 +16,33 @@ class SearchResult {
       $target: this.$searchResult,
     });
 
-    // this.data = initialData;
     this.onClick = onClick;
     this.loadMore = loadMore;
     this.createObserver = this.createObserver.bind(this);
     this.openModal = this.openModal.bind(this);
     this.render();
+  }
+
+  createLazyloadObserver(items) {
+    let io;
+
+    const options = {
+      rootMargin: "0px 0px 30px 0px",
+    };
+
+    const callback = (entries, observer) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        const { target } = entry;
+        const img = target.children[0];
+        img.src = img.dataset.src;
+        observer.unobserve(target);
+      });
+    };
+    io = new IntersectionObserver(callback, options);
+    items.forEach((item) => {
+      io.observe(item);
+    });
   }
 
   createObserver() {
@@ -42,6 +63,7 @@ class SearchResult {
 
     io = new IntersectionObserver(callback, options);
     const lastChild = this.$searchResult.lastElementChild;
+
     if (lastChild && lastChild.classList.contains("item")) {
       io.observe(lastChild);
     }
@@ -57,12 +79,12 @@ class SearchResult {
     this.isScrollPaging = isScrollPaging;
   }
 
-  makeDOMString(data) {
+  makeDOMString(data, id) {
     return data
       .map(
         (cat, i) => `
-			<div class="item" id="${i}">
-				<img class="cat-image" src=${cat.url} alt=${cat.name} />
+			<div class="item" id="${id ? id + i : i}">
+				<img class="cat-image" src="" data-src=${cat.url} alt=${cat.name} />
 			</div>
 		`
       )
@@ -87,6 +109,7 @@ class SearchResult {
 
   appendDOMString(target, str) {
     const arr = this.parseDOMString(str);
+    this.createLazyloadObserver(arr);
     target.append(...arr);
   }
 
@@ -96,8 +119,13 @@ class SearchResult {
         this.loader.setLoader(false);
         const lastChildId = Number(this.$searchResult.lastElementChild.id);
         const nextData = this.data.slice(lastChildId + 1);
-        this.appendDOMString(this.$searchResult, this.makeDOMString(nextData));
-        setTimeout(this.createObserver, 3000);
+
+        this.appendDOMString(
+          this.$searchResult,
+          this.makeDOMString(nextData, lastChildId + 1)
+        );
+
+        this.createObserver();
       } else {
         this.loader.setLoader(true);
       }
@@ -106,7 +134,12 @@ class SearchResult {
         if (!this.data) return;
         this.loader.setLoader(false);
         if (this.data.length > 0) {
-          this.$searchResult.innerHTML = this.makeDOMString(this.data);
+          this.$searchResult.innerHTML = "";
+          this.appendDOMString(
+            this.$searchResult,
+            this.makeDOMString(this.data)
+          );
+
           this.$searchResult.addEventListener("click", this.openModal);
           this.$searchResult.addEventListener("mouseover", ({ target }) => {
             if (!target.classList.contains("cat-image")) return;
@@ -127,7 +160,8 @@ class SearchResult {
               target.closest(".item").removeChild(overlay);
             }
           );
-          setTimeout(this.createObserver, 3000);
+
+          this.createObserver();
         } else {
           this.$searchResult.innerHTML = `<div class="no-result">검색결과가 없어요 ㅠㅜ</div>`;
         }
