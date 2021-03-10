@@ -158,6 +158,27 @@ body * {
   color: #fff;
   font-size: 1.5rem;
 }
+@media screen and (max-width: 992px) {
+  .SearchResult {
+    grid-template-columns: repeat(3, minmax(250px, 1fr));
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .ImageInfo .content-wrapper {
+    width: 100%;
+  }
+  .SearchResult {
+    grid-template-columns: repeat(2, minmax(250px, 1fr));
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .SearchResult {
+    grid-template-columns: repeat(1, minmax(250px, 1fr));
+  }
+}
+
 @-webkit-keyframes load7 {
   0%,
   80%,

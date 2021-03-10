@@ -45,6 +45,8 @@ class SearchInput {
 
     this.$searchHistory.addEventListener("click", ({ target }) => {
       if (target.classList.contains("history-keyword")) {
+        if (this.history.length >= 5) this.history.shift();
+
         const keyword = target.innerText;
         const newState = [...this.history, keyword];
         onSearch(keyword);
